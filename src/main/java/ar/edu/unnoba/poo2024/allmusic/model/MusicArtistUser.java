@@ -1,5 +1,10 @@
 package ar.edu.unnoba.poo2024.allmusic.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="users")
 public class MusicArtistUser extends User{
 
     private String artisticName;
@@ -15,6 +20,5 @@ public class MusicArtistUser extends User{
 
     public void setArtisticName(String artisticName) {
         this.artisticName = artisticName;
-    }    
-
+    }
 }
