@@ -1,15 +1,12 @@
 package ar.edu.unnoba.poo2024.allmusic.model;
 
-import jakarta.persistence.*;
-
 import java.util.List;
 
-@Entity
-@Table(name="playlist")
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+
 public class Playlist {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String namePlaylist;
 
