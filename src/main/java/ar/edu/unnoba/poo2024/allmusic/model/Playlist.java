@@ -2,18 +2,11 @@ package ar.edu.unnoba.poo2024.allmusic.model;
 
 import java.util.List;
 
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-
 public class Playlist {
 
     private long id;
     private String namePlaylist;
-
-    @ManyToOne
     private User owner;
-
-    @ManyToMany
     private List<Song> songs;
 
     public User getOwner() {
@@ -47,5 +40,4 @@ public class Playlist {
     public void setName(String name) {
         this.namePlaylist = name;
     }
-
 }
