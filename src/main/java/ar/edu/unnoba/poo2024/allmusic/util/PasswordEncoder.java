@@ -18,6 +18,5 @@ public class PasswordEncoder {
         return Password.check(rawPassword, encodedPassword)
                 .addPepper(SHARED_SECRET)
                 .with(bcrypt);
-                
     }
 }
