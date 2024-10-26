@@ -20,7 +20,7 @@ public class UserServiceImp implements UserService{
         if (userDB != null){
             throw new Exception();
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        repository.save(user);
     }
 }

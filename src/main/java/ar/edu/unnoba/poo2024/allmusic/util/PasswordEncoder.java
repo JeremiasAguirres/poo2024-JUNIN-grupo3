@@ -14,7 +14,6 @@ public class PasswordEncoder {
                 .with(bcrypt).getResult();
     }
     public boolean verify(String rawPassword, String encodedPassword){
-
         BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B, LOG_ROUNDS);
         return Password.check(rawPassword, encodedPassword)
                 .addPepper(SHARED_SECRET)
