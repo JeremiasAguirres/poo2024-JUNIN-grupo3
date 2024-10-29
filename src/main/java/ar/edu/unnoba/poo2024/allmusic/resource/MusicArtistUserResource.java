@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unnoba.poo2024.allmusic.dto.CreateUserRequestDTO;
+import ar.edu.unnoba.poo2024.allmusic.model.MusicArtistUser;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
 
@@ -22,7 +23,7 @@ public class MusicArtistUserResource {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateUserRequestDTO userDTO){
         ModelMapper modelMapper = new ModelMapper();
-        User user = modelMapper.map(userDTO, User.class);
+        User user = modelMapper.map(userDTO, MusicArtistUser.class);
         try{
             service.create(user);
             return new ResponseEntity<>(null, HttpStatus.CREATED);
