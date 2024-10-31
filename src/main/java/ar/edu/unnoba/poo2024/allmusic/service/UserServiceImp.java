@@ -23,4 +23,9 @@ public class UserServiceImp implements UserService{
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         repository.save(user);
     }
+
+    @Override
+    public User findByUsername(String username){
+        return repository.findByUsername(username);
+    }
 }
