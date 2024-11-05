@@ -6,7 +6,7 @@ import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.util.JwtTokenUtil;
 import ar.edu.unnoba.poo2024.allmusic.util.PasswordEncoder;
 
-public class AuthenticationServiceImp implements AuthenticathionService{
+public class AuthenticationServiceImp implements AuthenticationService{
 
     @Autowired
     private UserServiceImp userService;
