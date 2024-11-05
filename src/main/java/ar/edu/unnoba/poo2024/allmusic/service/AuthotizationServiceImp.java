@@ -1,10 +1,12 @@
 package ar.edu.unnoba.poo2024.allmusic.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.util.JwtTokenUtil;
 
+@Service
 public class AuthotizationServiceImp implements AuthorizationService{
     @Autowired
     private JwtTokenUtil jwtTokenUtil;

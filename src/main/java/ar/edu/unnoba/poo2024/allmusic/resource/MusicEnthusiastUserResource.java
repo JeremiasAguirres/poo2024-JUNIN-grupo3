@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unnoba.poo2024.allmusic.dto.AuthenticationRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.CreateUserRequestDTO;
-import ar.edu.unnoba.poo2024.allmusic.model.MusicArtistUser;
 import ar.edu.unnoba.poo2024.allmusic.model.MusicEnthusiastUser;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthenticationService;
-import ar.edu.unnoba.poo2024.allmusic.service.AuthenticationServiceImp;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
 
 @RestController
