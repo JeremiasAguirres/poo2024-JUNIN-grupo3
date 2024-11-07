@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 
 @Repository
-public interface UserRepository  extends JpaRepository<User,Long>{
+public interface UserRepository extends JpaRepository<User,Long>{
 
     //Cualquiera de las siguientes anotaciones se puede usar
     //@Query(value = "SELECT u FROM User u WHERE u.username = ?1") <--- Esta usa la especificacion de JPA.
