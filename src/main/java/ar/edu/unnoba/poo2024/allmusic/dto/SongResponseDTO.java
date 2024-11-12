@@ -5,11 +5,10 @@ import ar.edu.unnoba.poo2024.allmusic.model.Genre;
 public class SongResponseDTO {
     private long id;
     private String name;
-    private String description;
     private Genre genre;
     private Artist artist;
 
-    public class Artist{
+    public static class Artist{
         private long id;
         private String name;
 
@@ -25,7 +24,7 @@ public class SongResponseDTO {
             return this.id;
         }
 
-        public void setId(long id){
+        public void setId(Long id){
             this.id = id;
         }
         
@@ -46,14 +45,6 @@ public class SongResponseDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Genre getGenre() {
