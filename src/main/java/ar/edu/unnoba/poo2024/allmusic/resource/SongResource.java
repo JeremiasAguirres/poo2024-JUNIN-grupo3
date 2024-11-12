@@ -32,6 +32,11 @@ public class SongResource {
         try{
             authorizationService.authorize(token);
             ModelMapper modelMapper = new ModelMapper();
+
+            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
+            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
+            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
+
             List<Song> songs = songService.getAll();
             List<SongResponseDTO> dtos = songs.stream()
             .map(song -> modelMapper.map(song, SongResponseDTO.class))
