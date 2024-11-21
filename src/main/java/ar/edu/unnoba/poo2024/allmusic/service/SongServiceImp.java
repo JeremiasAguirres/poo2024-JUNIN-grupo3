@@ -25,5 +25,14 @@ public class SongServiceImp implements SongService{
         return repository.findById(id);
     }
 
+    @Override
+    public void create(Song song) throws Exception{
+        Song songDB = repository.findByName(song.getName());
+        if(songDB != null){
+            throw new Exception();
+        }
+        repository.save(song);
+    }
+
 
 }

@@ -44,5 +44,5 @@ public abstract class User {
         this.password = password;
     }
     
-    abstract boolean canCreateSongs();
+    public abstract boolean canCreateSongs();
 }

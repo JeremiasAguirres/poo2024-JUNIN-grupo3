@@ -36,7 +36,6 @@ public class MusicArtistUserResource {
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         }
-
     }
 
     @PostMapping(path="/auth",produces = "application/json")

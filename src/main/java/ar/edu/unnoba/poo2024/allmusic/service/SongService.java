@@ -8,4 +8,5 @@ import ar.edu.unnoba.poo2024.allmusic.model.Song;
 public interface SongService {
     public List<Song> getAll();
     public Optional<Song> getSongById(Long id);
+    public void create(Song song) throws Exception;
 }
