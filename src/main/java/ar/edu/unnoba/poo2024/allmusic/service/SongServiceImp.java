@@ -1,7 +1,6 @@
 package ar.edu.unnoba.poo2024.allmusic.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,8 @@ public class SongServiceImp implements SongService{
     }
 
     @Override
-    public Optional<Song> getSongById(Long id){
-        return repository.findById(id);
+    public Song findById(Long id){
+        return repository.findById(id).orElse(null);
     }
 
     @Override
@@ -34,5 +33,11 @@ public class SongServiceImp implements SongService{
         repository.save(song);
     }
 
+    public void edit(Song songEdit, Long songId) throws Exception{
+        Song songDB = repository.getReferenceById(songId);
+        songDB.setName(songEdit.getName());
+        songDB.setGenre(songEdit.getGenre());
+        repository.save(songDB);
+    }
 
 }

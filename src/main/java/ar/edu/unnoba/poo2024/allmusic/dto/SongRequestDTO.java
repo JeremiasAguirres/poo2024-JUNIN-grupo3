@@ -2,7 +2,7 @@ package ar.edu.unnoba.poo2024.allmusic.dto;
 
 import ar.edu.unnoba.poo2024.allmusic.model.Genre;
 
-public class CreateSongRequestDTO {
+public class SongRequestDTO {
 
     private String name;
     private Genre genre;

@@ -1,12 +1,12 @@
 package ar.edu.unnoba.poo2024.allmusic.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
 
 public interface SongService {
     public List<Song> getAll();
-    public Optional<Song> getSongById(Long id);
+    public Song findById(Long id);
     public void create(Song song) throws Exception;
+    public void edit(Song song, Long id) throws Exception;
 }

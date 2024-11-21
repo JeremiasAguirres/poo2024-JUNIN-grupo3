@@ -10,12 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ar.edu.unnoba.poo2024.allmusic.dto.CreateSongRequestDTO;
+import ar.edu.unnoba.poo2024.allmusic.dto.SongRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.SongResponseDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.MusicArtistUser;
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
@@ -24,6 +25,7 @@ import ar.edu.unnoba.poo2024.allmusic.service.AuthorizationService;
 import ar.edu.unnoba.poo2024.allmusic.service.SongService;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
 import ar.edu.unnoba.poo2024.allmusic.util.JwtTokenUtil;
+
 
 
 
@@ -71,7 +73,7 @@ public class SongResource {
             .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
             .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
 
-            SongResponseDTO dto = modelMapper.map(songService.getSongById(songId), SongResponseDTO.class);
+            SongResponseDTO dto = modelMapper.map(songService.findById(songId), SongResponseDTO.class);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch(Exception e){
@@ -80,23 +82,42 @@ public class SongResource {
     }
 
     @PostMapping
-    public ResponseEntity<?> createSong(@RequestHeader("Authorization") String token , @RequestBody CreateSongRequestDTO createSongRequestDTO) {
+    public ResponseEntity<?> createSong(@RequestHeader("Authorization") String token , @RequestBody SongRequestDTO songRequestDTO) {
         try{
             authorizationService.authorize(token);
-            User user = userService.findByUsername(jwtTokenUtil.getSubject(token));
-            if (!user.canCreateSongs()){
+            User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
+            if (!activeUser.canCreateSongs()){
                 throw new Exception();
             }
-
             ModelMapper modelMapper = new ModelMapper();
-            Song song = modelMapper.map(createSongRequestDTO, Song.class);
-            song.setAuthor((MusicArtistUser) user);
+            Song song = modelMapper.map(songRequestDTO, Song.class);
+            song.setAuthor((MusicArtistUser) activeUser);
             songService.create(song);
+            return new ResponseEntity<>(null, HttpStatus.OK);
         }
         catch(Exception e){
             return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
         }
-        return null;
+    }
+
+    @PutMapping(value = "/{songId}")
+    public ResponseEntity<?> changeSongDetails(@RequestHeader("Authorization") String token, @PathVariable Long songId, @RequestBody SongRequestDTO songDTO) {
+        try{
+            authorizationService.authorize(token);
+            MusicArtistUser activeUser = (MusicArtistUser) userService.findByUsername(jwtTokenUtil.getSubject(token));
+            Song targetSong = songService.findById(songId);
+            if(targetSong == null || !targetSong.getAuthor().equals(activeUser)){
+                throw new Exception();
+            }
+            ModelMapper modelMapper = new ModelMapper();
+            Song songEdit = modelMapper.map(songDTO, Song.class);
+            songService.edit(songEdit, songId);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+        }
+
     }
     
 }
