@@ -66,25 +66,4 @@ public class SongResource {
             return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
         }
     }
-
-    @GetMapping(value = "?artist=:artist_name&genre=:genre", produces = "application/json")
-    public ResponseEntity<?> filterSongs(@RequestHeader("Authorization") String token){
-        try{
-            authorizationService.authorize(token);
-            ModelMapper modelMapper = new ModelMapper();
-
-            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
-            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
-            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
-
-            List<Song> songs = songService.getAll();
-            List<SongResponseDTO> dtos = songs.stream()
-            .map(song -> modelMapper.map(song, SongResponseDTO.class))
-            .collect(Collectors.toList());
-            return new ResponseEntity<>(dtos, HttpStatus.OK);
-        }
-        catch(Exception e){
-            return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
-        }
-    }
 }

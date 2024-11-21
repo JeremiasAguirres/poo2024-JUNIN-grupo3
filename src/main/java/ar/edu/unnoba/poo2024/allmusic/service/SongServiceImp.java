@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ar.edu.unnoba.poo2024.allmusic.model.Genre;
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
 import ar.edu.unnoba.poo2024.allmusic.repository.SongRepository;
 
@@ -26,9 +25,5 @@ public class SongServiceImp implements SongService{
         return repository.findById(id);
     }
 
-    @Override
-    public List<Song> filterByArtistOrGenre(String artisticName, Genre genre) {
-        return repository.findAll();
-    }
 
 }
