@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ar.edu.unnoba.poo2024.allmusic.model.MusicArtistUser;
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
 import ar.edu.unnoba.poo2024.allmusic.repository.SongRepository;
 
@@ -40,4 +41,11 @@ public class SongServiceImp implements SongService{
         repository.save(songDB);
     }
 
+    public void remove(Long songId){
+        repository.deleteById(songId);
+    }
+
+    public boolean checkOwnership(MusicArtistUser user, Long id) throws Exception{
+        return (repository.getReferenceById(id).getAuthor().equals(user));
+    }
 }

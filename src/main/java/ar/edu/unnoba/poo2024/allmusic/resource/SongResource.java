@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -105,8 +106,7 @@ public class SongResource {
         try{
             authorizationService.authorize(token);
             MusicArtistUser activeUser = (MusicArtistUser) userService.findByUsername(jwtTokenUtil.getSubject(token));
-            Song targetSong = songService.findById(songId);
-            if(targetSong == null || !targetSong.getAuthor().equals(activeUser)){
+            if(!songService.checkOwnership(activeUser, songId)){
                 throw new Exception();
             }
             ModelMapper modelMapper = new ModelMapper();
@@ -117,7 +117,21 @@ public class SongResource {
         catch(Exception e){
             return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
         }
-
     }
-    
+
+    @DeleteMapping(value = "/{songId}")
+    public ResponseEntity<?> removeSong(@RequestHeader("Authorization") String token, @PathVariable Long songId) {
+        try{
+            authorizationService.authorize(token);
+            MusicArtistUser activeUser = (MusicArtistUser) userService.findByUsername(jwtTokenUtil.getSubject(token));
+            if(!songService.checkOwnership(activeUser, songId)){
+                throw new Exception();
+            }
+            songService.remove(songId);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+        }
+    }
 }
