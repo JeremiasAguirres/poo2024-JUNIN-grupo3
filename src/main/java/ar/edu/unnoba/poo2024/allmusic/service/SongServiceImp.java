@@ -26,6 +26,11 @@ public class SongServiceImp implements SongService{
     }
 
     @Override
+    public List<Song> getByArtistOrGenre(String artist, String genre){
+        return repository.getByArtistOrGenre(artist, genre);
+    }
+
+    @Override
     public void create(Song song) throws Exception{
         Song songDB = repository.findByName(song.getName());
         if(songDB != null){

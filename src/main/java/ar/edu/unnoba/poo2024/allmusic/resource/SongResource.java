@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unnoba.poo2024.allmusic.dto.SongRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.SongResponseDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.MusicArtistUser;
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
-import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthorizationService;
 import ar.edu.unnoba.poo2024.allmusic.service.SongService;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
@@ -82,17 +82,39 @@ public class SongResource {
         }
     }
 
+    @GetMapping(params = {"artist", "genre"})
+    public ResponseEntity<?> getSongsFilter(@RequestHeader("Authorization") String token,@RequestParam(required = false) String artist ,@RequestParam(required = false) String genre){
+        try{
+            authorizationService.authorize(token);
+
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
+            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
+            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
+
+            List<Song> songs = songService.getByArtistOrGenre(artist, genre);
+            List<SongResponseDTO> dtos = songs.stream()
+            .map(song -> modelMapper.map(song, SongResponseDTO.class))
+            .collect(Collectors.toList());
+
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> createSong(@RequestHeader("Authorization") String token , @RequestBody SongRequestDTO songRequestDTO) {
         try{
             authorizationService.authorize(token);
-            User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
+            MusicArtistUser activeUser = (MusicArtistUser) userService.findByUsername(jwtTokenUtil.getSubject(token));
             if (!activeUser.canCreateSongs()){
                 throw new Exception();
             }
             ModelMapper modelMapper = new ModelMapper();
             Song song = modelMapper.map(songRequestDTO, Song.class);
-            song.setAuthor((MusicArtistUser) activeUser);
+            song.setAuthor(activeUser);
             songService.create(song);
             return new ResponseEntity<>(null, HttpStatus.OK);
         }
