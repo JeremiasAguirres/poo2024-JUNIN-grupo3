@@ -82,7 +82,7 @@ public class SongResource {
         }
     }
 
-    @GetMapping(params = {"artist", "genre"})
+    @GetMapping(params = {"artist", "genre"}, produces = "application/json")
     public ResponseEntity<?> getSongsFilter(@RequestHeader("Authorization") String token,@RequestParam(required = false) String artist ,@RequestParam(required = false) String genre){
         try{
             authorizationService.authorize(token);

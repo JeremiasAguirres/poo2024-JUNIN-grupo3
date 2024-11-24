@@ -1,37 +1,54 @@
 package ar.edu.unnoba.poo2024.allmusic.resource;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unnoba.poo2024.allmusic.dto.AuthenticationRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.CreateUserRequestDTO;
+import ar.edu.unnoba.poo2024.allmusic.dto.SongResponseDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.MusicArtistUser;
+import ar.edu.unnoba.poo2024.allmusic.model.Song;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthenticationService;
+import ar.edu.unnoba.poo2024.allmusic.service.AuthorizationService;
+import ar.edu.unnoba.poo2024.allmusic.service.SongService;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
+import ar.edu.unnoba.poo2024.allmusic.util.JwtTokenUtil;
+
 
 @RestController
 @RequestMapping("/artist")
 public class MusicArtistUserResource {
     @Autowired
-    private UserService service;
+    private UserService userService;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private AuthorizationService authorizationService;
+    @Autowired
+    private SongService songService;
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateUserRequestDTO userDTO){
         ModelMapper modelMapper = new ModelMapper();
         User user = modelMapper.map(userDTO, MusicArtistUser.class);
         try{
-            service.create(user);
+            userService.create(user);
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
@@ -51,5 +68,27 @@ public class MusicArtistUserResource {
             return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @GetMapping("/me/songs")
+    public ResponseEntity<?> getUserSongs(@RequestHeader("Authorization") String token) {
+        try {
+            authorizationService.authorize(token);
+            List<Song> userSongs = songService.getByArtistOrGenre(jwtTokenUtil.getSubject(token) , null);
+
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
+            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
+            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
+
+            List<SongResponseDTO> dtos = userSongs.stream()
+            .map(song -> modelMapper.map(song, SongResponseDTO.class))
+            .collect(Collectors.toList());
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
+
+        }catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+    }
+    
 
 }
