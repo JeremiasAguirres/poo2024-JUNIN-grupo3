@@ -83,7 +83,6 @@ public class PlaylistResource {
         }
     }
 
-    //no puedo identificar el problema
     @PutMapping(value = "/{playlistID}")
     public ResponseEntity<?> changePlaylistDetails(@RequestHeader("Authorization") String token, @PathVariable Long playlistID, @RequestBody PlaylistRequestDTO playlistRequestDTO){
         try{
@@ -91,7 +90,7 @@ public class PlaylistResource {
             User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
 
             if (!playlistService.checkOwnership(activeUser, playlistID)) {
-                throw new Exception("You do not own this playlist");
+                throw new Exception();
             }
 
             Playlist playlistEdit = new Playlist();
