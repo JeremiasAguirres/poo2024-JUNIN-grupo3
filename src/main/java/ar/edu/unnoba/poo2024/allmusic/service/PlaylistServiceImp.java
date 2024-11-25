@@ -1,5 +1,6 @@
 package ar.edu.unnoba.poo2024.allmusic.service;
 
+import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistResponseDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.Playlist;
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PlaylistServiceImp implements PlaylistService {
@@ -25,8 +27,21 @@ public class PlaylistServiceImp implements PlaylistService {
     }
 
     @Override
-    public Playlist findPlaylistById(Long id) throws Exception {
-        return null;
+    public PlaylistResponseDTO getPlaylistDetailsById(Long id) throws Exception {
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new Exception());
+
+        PlaylistResponseDTO responseDTO = new PlaylistResponseDTO();
+        responseDTO.setId(playlist.getId());
+        responseDTO.setNamePlaylist(playlist.getPlaylistName());
+        responseDTO.setOwner(playlist.getOwner().getUsername());
+        responseDTO.setSongNames(
+                playlist.getSongs().stream()
+                        .map(Song::getName)
+                        .collect(Collectors.toList())
+        );
+
+        return responseDTO;
     }
 
     @Override
@@ -68,7 +83,7 @@ public class PlaylistServiceImp implements PlaylistService {
         Playlist playlistDB = playlistRepository.getReferenceById(playListID);
         Song song = songRepository.getReferenceById(songId);
         if(playlistDB.getSongs().contains(song)) {
-            throw new Exception("Song already exists");
+            throw new Exception();
         }
         playlistDB.getSongs().add(song);
         playlistDB.setCount(playlistDB.getCount() + 1);

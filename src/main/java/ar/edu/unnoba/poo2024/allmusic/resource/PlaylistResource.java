@@ -53,13 +53,14 @@ public class PlaylistResource {
         }
     }
 
-    //falta terminar
     @GetMapping(value = "/{playlistID}", produces = "application/json")
     public ResponseEntity<?> getPlaylistById(@RequestHeader("Authorization") String token, @PathVariable("playlistID") Long playlistID) {
         try {
             authorizationService.authorize(token);
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            PlaylistResponseDTO playlistDetails = playlistService.getPlaylistDetailsById(playlistID);
+
+            return new ResponseEntity<>(playlistDetails, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -129,12 +130,12 @@ public class PlaylistResource {
             User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
 
             if (!playlistService.checkOwnership(activeUser, playlistID)) {
-                throw new Exception("You do not own this playlist");
+                throw new Exception();
             }
 
             playlistService.addSongToPlaylist(playlistID, songId);
 
-            return new ResponseEntity<>("Song added successfully to the playlist", HttpStatus.OK);
+            return new ResponseEntity<>(null, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);

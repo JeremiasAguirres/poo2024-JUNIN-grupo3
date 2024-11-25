@@ -11,48 +11,38 @@ public class PlaylistResponseDTO {
     @JsonProperty("name_playlist")
     private String namePlaylist;
     private Long id;
-    private User owenr;
-    private List<Song> songs;
-    //private int count;
+    private String owner; // Nombre del dueño de la playlist
+    private List<String> songNames; // Lista de nombres de canciones
 
-
-    public String getPlaylistName() {
-        return this.namePlaylist;
+    public String getNamePlaylist() {
+        return namePlaylist;
     }
 
-    public void setPlaylistName(String name) {
-        this.namePlaylist = name;
+    public void setNamePlaylist(String namePlaylist) {
+        this.namePlaylist = namePlaylist;
     }
 
     public Long getId() {
         return id;
     }
 
-    /*public int getCount() {
-        return songs.size();
-    }*/
-
-    /*public void setCount(int count) {
-        this.count = count;
-    }*/
-
     public void setId(Long id) {
         this.id = id;
     }
 
-    public User getOwenr() {
-        return owenr;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setOwenr(User owenr) {
-        this.owenr = owenr;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    public List<Song> getSongs() {
-        return songs;
+    public List<String> getSongNames() {
+        return songNames;
     }
 
-    public void setSongs(List<Song> songs) {
-        this.songs = songs;
+    public void setSongNames(List<String> songNames) {
+        this.songNames = songNames;
     }
 }
