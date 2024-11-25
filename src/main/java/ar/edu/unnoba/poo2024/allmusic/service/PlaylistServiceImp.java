@@ -32,9 +32,9 @@ public class PlaylistServiceImp implements PlaylistService {
     @Override
     public void createPlaylist(Playlist playlist) throws Exception {
         Playlist playlistDB = playlistRepository.findByName(playlist.getPlaylistName());
-        if(playlistDB != null) {
-            throw new Exception("Playlist already exists");
-        }
+        /*if(playlistDB != null) {                              //si no se queremos que se repita el nombre de las playlist
+            throw new Exception("Playlist already exists");     //tenemos que descomentar esta parte
+        }*/
         playlistRepository.save(playlist);
     }
 
@@ -42,6 +42,7 @@ public class PlaylistServiceImp implements PlaylistService {
     public void editPlaylist(Long playListID, Playlist playlistEdit) throws Exception {
         Playlist playlistDB = playlistRepository.getReferenceById(playListID);
         playlistDB.setPlaylistName(playlistEdit.getPlaylistName());
+        playlistDB.setCount(playlistDB.getSongs().size());
         playlistRepository.save(playlistDB);
     }
 
@@ -52,18 +53,25 @@ public class PlaylistServiceImp implements PlaylistService {
 
     @Override
     public void removeSongFromPlaylist(Long playListID, Long songId) throws Exception {
-
+        Playlist playlistDB = playlistRepository.getReferenceById(playListID);
+        Song song = songRepository.getReferenceById(songId);
+        if(!playlistDB.getSongs().contains(song)) {
+            throw new Exception();
+        }
+        playlistDB.getSongs().remove(song);
+        playlistDB.setCount(playlistDB.getCount() - 1);
+        playlistRepository.save(playlistDB);
     }
 
     @Override
     public void addSongToPlaylist(Long playListID, Long songId) throws Exception {
         Playlist playlistDB = playlistRepository.getReferenceById(playListID);
-        Song songDB = songRepository.findById(songId)
-                .orElseThrow(() -> new Exception("Song not found"));        //verifica que este la cancion, si no esta devuelve un error
-        if(playlistDB.getSongs().contains(songDB)) {
-            throw new Exception("Song already exists");                     //verifica que no se repitan
+        Song song = songRepository.getReferenceById(songId);
+        if(playlistDB.getSongs().contains(song)) {
+            throw new Exception("Song already exists");
         }
-        playlistDB.getSongs().add(songDB);
+        playlistDB.getSongs().add(song);
+        playlistDB.setCount(playlistDB.getCount() + 1);
         playlistRepository.save(playlistDB);
     }
 

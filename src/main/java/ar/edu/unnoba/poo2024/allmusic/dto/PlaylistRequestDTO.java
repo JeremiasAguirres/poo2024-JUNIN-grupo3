@@ -17,7 +17,7 @@ public class PlaylistRequestDTO {
 
     private int count;
 
-    public String getnamePlaylist() {
+    public String getNamePlaylist() {
         return namePlaylist ;
     }
 

@@ -13,7 +13,8 @@ public class PlaylistResponseDTO {
     private Long id;
     private User owenr;
     private List<Song> songs;
-    private int count;
+    //private int count;
+
 
     public String getPlaylistName() {
         return this.namePlaylist;
@@ -27,13 +28,13 @@ public class PlaylistResponseDTO {
         return id;
     }
 
-    public int getCount() {
+    /*public int getCount() {
         return songs.size();
-    }
+    }*/
 
-    public void setCount(int count) {
+    /*public void setCount(int count) {
         this.count = count;
-    }
+    }*/
 
     public void setId(Long id) {
         this.id = id;

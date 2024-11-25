@@ -2,7 +2,6 @@ package ar.edu.unnoba.poo2024.allmusic.resource;
 
 import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistResponseDTO;
-import ar.edu.unnoba.poo2024.allmusic.dto.SongRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.Playlist;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthorizationService;
@@ -33,12 +32,8 @@ public class PlaylistResource {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private SongService songService;
-
-    @Autowired
     private UserService userService;
 
-    //Retorna todas las playlists guardadasd+   6+
     @GetMapping(produces = "application/json")
     public ResponseEntity<?> getPlaylists(@RequestHeader("Authorization") String token) {
         try {
@@ -58,6 +53,7 @@ public class PlaylistResource {
         }
     }
 
+    //falta terminar
     @GetMapping(value = "/{playlistID}", produces = "application/json")
     public ResponseEntity<?> getPlaylistById(@RequestHeader("Authorization") String token, @PathVariable("playlistID") Long playlistID) {
         try {
@@ -87,17 +83,19 @@ public class PlaylistResource {
         }
     }
 
+    //no puedo identificar el problema
     @PutMapping(value = "/{playlistID}")
     public ResponseEntity<?> changePlaylistDetails(@RequestHeader("Authorization") String token, @PathVariable Long playlistID, @RequestBody PlaylistRequestDTO playlistRequestDTO){
         try{
             authorizationService.authorize(token);
             User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
 
-            if(!playlistService.checkOwnership(activeUser, playlistID)){
-                throw new Exception();
+            if (!playlistService.checkOwnership(activeUser, playlistID)) {
+                throw new Exception("You do not own this playlist");
             }
-            ModelMapper modelMapper = new ModelMapper();
-            Playlist playlistEdit = modelMapper.map(playlistRequestDTO, Playlist.class);
+
+            Playlist playlistEdit = new Playlist();
+            playlistEdit.setPlaylistName(playlistRequestDTO.getNamePlaylist());
             playlistService.editPlaylist(playlistID, playlistEdit);
             return new ResponseEntity<>(null, HttpStatus.OK);
 
@@ -124,25 +122,44 @@ public class PlaylistResource {
         }
     }
 
-    //supuestamente esta bien, pero no lo estaria haciendo, puede que se deba a un error mio en la url
     @PostMapping("/{playlistID}/songs/{songId}")
-    public ResponseEntity<?> addSongToPlaylist(@RequestHeader("Authorization") String token, @PathVariable Long songId, @PathVariable Long playlistID) {
+    public ResponseEntity<?> addSongToPlaylist(@RequestHeader("Authorization") String token, @PathVariable Long playlistID, @PathVariable Long songId) {
         try {
             authorizationService.authorize(token);
             User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
 
             if (!playlistService.checkOwnership(activeUser, playlistID)) {
-                throw new Exception();
+                throw new Exception("You do not own this playlist");
             }
 
-            playlistService.addSongToPlaylist(songId, playlistID);
+            playlistService.addSongToPlaylist(playlistID, songId);
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return new ResponseEntity<>("Song added successfully to the playlist", HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
+    }
 
+    @DeleteMapping("/{playlistID}/songs/{songID}")
+    public ResponseEntity<?> deletePlaylist(@RequestHeader("Authorization") String token, @PathVariable Long playlistID, @PathVariable Long songID){
+        try {
+            authorizationService.authorize(token);
+            User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
+
+            if(!playlistService.checkOwnership(activeUser, playlistID)){
+                throw new Exception();
+            }
+
+            playlistService.removeSongFromPlaylist(playlistID, songID);
+
+            return new ResponseEntity<>(null, HttpStatus.OK);
+
+        }catch (Exception e){
+
+            return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+
+        }
     }
 
 }

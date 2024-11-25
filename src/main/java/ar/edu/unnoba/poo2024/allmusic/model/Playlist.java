@@ -56,4 +56,8 @@ public class Playlist {
         return this.songs.size();
     }
 
+    public void setCount(int i){
+        this.count = this.songs.size();
+    }
+
 }
