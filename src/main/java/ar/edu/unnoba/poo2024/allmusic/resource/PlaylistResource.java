@@ -78,6 +78,7 @@ public class PlaylistResource {
             playlistService.createPlaylist(playlist);
 
             return new ResponseEntity<>(null, HttpStatus.OK);
+
         }   catch(Exception e){
             return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
         }
@@ -155,9 +156,7 @@ public class PlaylistResource {
             return new ResponseEntity<>(null, HttpStatus.OK);
 
         }catch (Exception e){
-
             return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
-
         }
     }
 
