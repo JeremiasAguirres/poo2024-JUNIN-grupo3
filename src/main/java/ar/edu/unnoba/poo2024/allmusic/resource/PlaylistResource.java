@@ -3,6 +3,7 @@ package ar.edu.unnoba.poo2024.allmusic.resource;
 import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistResponseDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.Playlist;
+import ar.edu.unnoba.poo2024.allmusic.model.Song;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthorizationService;
 import ar.edu.unnoba.poo2024.allmusic.service.PlaylistService;
@@ -58,9 +59,19 @@ public class PlaylistResource {
         try {
             authorizationService.authorize(token);
 
-            PlaylistResponseDTO playlistDetails = playlistService.getPlaylistDetailsById(playlistID);
+            Playlist playlist = playlistService.getPlaylistDetailsById(playlistID);
 
-            return new ResponseEntity<>(playlistDetails, HttpStatus.OK);
+            PlaylistResponseDTO responseDTO = new PlaylistResponseDTO();
+            responseDTO.setId(playlist.getId());
+            responseDTO.setNamePlaylist(playlist.getPlaylistName());
+            responseDTO.setOwner(playlist.getOwner().getUsername());
+            responseDTO.setSongNames(
+                    playlist.getSongs().stream()
+                            .map(Song::getName)
+                            .collect(Collectors.toList())
+            );
+
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);

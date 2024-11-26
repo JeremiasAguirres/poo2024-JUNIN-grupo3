@@ -9,7 +9,7 @@ import java.util.List;
 public interface PlaylistService {
 
     public List<Playlist> getAllPlaylists();
-    public PlaylistResponseDTO getPlaylistDetailsById(Long id) throws Exception;
+    public Playlist getPlaylistDetailsById(Long id) throws Exception;
     public void createPlaylist(Playlist playlist) throws Exception;
     public void editPlaylist(Long playListID, Playlist playlistName) throws Exception;
     public void deletePlaylist(Long playListID) throws Exception;

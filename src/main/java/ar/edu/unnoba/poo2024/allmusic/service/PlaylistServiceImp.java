@@ -27,21 +27,8 @@ public class PlaylistServiceImp implements PlaylistService {
     }
 
     @Override
-    public PlaylistResponseDTO getPlaylistDetailsById(Long id) throws Exception {
-        Playlist playlist = playlistRepository.findById(id)
-                .orElseThrow(() -> new Exception());
-
-        PlaylistResponseDTO responseDTO = new PlaylistResponseDTO();
-        responseDTO.setId(playlist.getId());
-        responseDTO.setNamePlaylist(playlist.getPlaylistName());
-        responseDTO.setOwner(playlist.getOwner().getUsername());
-        responseDTO.setSongNames(
-                playlist.getSongs().stream()
-                        .map(Song::getName)
-                        .collect(Collectors.toList())
-        );
-
-        return responseDTO;
+    public Playlist getPlaylistDetailsById(Long id) throws Exception {
+        return playlistRepository.findById(id).orElseThrow(() -> new Exception());
     }
 
     @Override
