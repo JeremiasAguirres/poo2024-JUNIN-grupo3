@@ -1,23 +1,33 @@
 package ar.edu.unnoba.poo2024.allmusic.resource;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistRequestDTO;
 import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistResponseDTO;
+import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistResponseLiteDTO;
+import ar.edu.unnoba.poo2024.allmusic.dto.SongResponseDTO;
 import ar.edu.unnoba.poo2024.allmusic.model.Playlist;
 import ar.edu.unnoba.poo2024.allmusic.model.Song;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthorizationService;
 import ar.edu.unnoba.poo2024.allmusic.service.PlaylistService;
-import ar.edu.unnoba.poo2024.allmusic.service.SongService;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
 import ar.edu.unnoba.poo2024.allmusic.util.JwtTokenUtil;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/playlists")
@@ -41,12 +51,15 @@ public class PlaylistResource {
             authorizationService.authorize(token);
 
             ModelMapper modelMapper = new ModelMapper();
-            modelMapper.map(Playlist.class, PlaylistRequestDTO.class);
 
-            List<Playlist> playlist = playlistService.getAllPlaylists();
-            List<PlaylistRequestDTO> dtos = playlist.stream()
-                    .map(playlist1 -> modelMapper.map(playlist1, PlaylistRequestDTO.class))
+            List<Playlist> playlists = playlistService.getAllPlaylists();
+            List<PlaylistResponseLiteDTO> dtos = playlists.stream()
+                    .map(playlist -> modelMapper.map(playlist, PlaylistResponseLiteDTO.class))
                     .collect(Collectors.toList());
+
+            for(PlaylistResponseLiteDTO dto : dtos){
+                dto.setCount();
+            }
 
             return new ResponseEntity<>(dtos, HttpStatus.OK);
         } catch (Exception e) {
@@ -60,16 +73,15 @@ public class PlaylistResource {
             authorizationService.authorize(token);
 
             Playlist playlist = playlistService.getPlaylistDetailsById(playlistID);
+            ModelMapper modelMapper = new ModelMapper();
+
+            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
+            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
+            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
 
             PlaylistResponseDTO responseDTO = new PlaylistResponseDTO();
-            responseDTO.setId(playlist.getId());
-            responseDTO.setNamePlaylist(playlist.getPlaylistName());
-            responseDTO.setOwner(playlist.getOwner().getUsername());
-            responseDTO.setSongNames(
-                    playlist.getSongs().stream()
-                            .map(Song::getName)
-                            .collect(Collectors.toList())
-            );
+            responseDTO = modelMapper.map(playlist, PlaylistResponseDTO.class);
+
 
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
@@ -79,13 +91,13 @@ public class PlaylistResource {
     }
 
     @PostMapping(produces = "application/json")
-    public ResponseEntity<?> createPlaylist(@RequestHeader("Authorization") String token, @RequestBody PlaylistResponseDTO playlistResponseDTO) {
+    public ResponseEntity<?> createPlaylist(@RequestHeader("Authorization") String token, @RequestBody PlaylistRequestDTO playlistRequestDTO) {
         try{
             authorizationService.authorize(token);
             User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));
 
             ModelMapper modelMapper = new ModelMapper();
-            Playlist playlist = modelMapper.map(playlistResponseDTO, Playlist.class);
+            Playlist playlist = modelMapper.map(playlistRequestDTO, Playlist.class);
             playlist.setOwner(activeUser);
             playlistService.createPlaylist(playlist);
 
@@ -107,7 +119,7 @@ public class PlaylistResource {
             }
 
             Playlist playlistEdit = new Playlist();
-            playlistEdit.setPlaylistName(playlistRequestDTO.getNamePlaylist());
+            playlistEdit.setPlaylistName(playlistRequestDTO.getPlaylistName());
             playlistService.editPlaylist(playlistID, playlistEdit);
             return new ResponseEntity<>(null, HttpStatus.OK);
 
@@ -154,7 +166,7 @@ public class PlaylistResource {
     }
 
     @DeleteMapping("/{playlistID}/songs/{songID}")
-    public ResponseEntity<?> deletePlaylist(@RequestHeader("Authorization") String token, @PathVariable Long playlistID, @PathVariable Long songID){
+    public ResponseEntity<?> deletePlaylistsSong(@RequestHeader("Authorization") String token, @PathVariable Long playlistID, @PathVariable Long songID){
         try {
             authorizationService.authorize(token);
             User activeUser = userService.findByUsername(jwtTokenUtil.getSubject(token));

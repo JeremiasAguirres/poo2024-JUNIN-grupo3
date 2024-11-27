@@ -1,10 +1,9 @@
 package ar.edu.unnoba.poo2024.allmusic.service;
 
-import ar.edu.unnoba.poo2024.allmusic.dto.PlaylistResponseDTO;
+import java.util.List;
+
 import ar.edu.unnoba.poo2024.allmusic.model.Playlist;
 import ar.edu.unnoba.poo2024.allmusic.model.User;
-
-import java.util.List;
 
 public interface PlaylistService {
 

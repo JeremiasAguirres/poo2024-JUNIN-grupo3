@@ -1,25 +1,42 @@
 package ar.edu.unnoba.poo2024.allmusic.dto;
 
-import ar.edu.unnoba.poo2024.allmusic.model.Song;
-import ar.edu.unnoba.poo2024.allmusic.model.User;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class PlaylistResponseDTO {
 
-    @JsonProperty("name_playlist")
-    private String namePlaylist;
+    private String playlistName;
     private Long id;
-    private String owner; // Nombre del dueño de la playlist
-    private List<String> songNames; // Lista de nombres de canciones
+    private List<SongResponseDTO> songs; // Lista de canciones
+    private Owner owner;
 
-    public String getNamePlaylist() {
-        return namePlaylist;
+    public static class Owner{
+        private long id;
+        private String username;
+
+        public String getUsername(){
+            return this.username;
+        }
+
+        public void setUsername(String username){
+            this.username = username;
+        }
+
+        public long getId(){
+            return this.id;
+        }
+
+        public void setId(Long id){
+            this.id = id;
+        }
+        
     }
 
-    public void setNamePlaylist(String namePlaylist) {
-        this.namePlaylist = namePlaylist;
+    public String getPlaylistName() {
+        return playlistName;
+    }
+
+    public void setPlaylistName(String playlistName) {
+        this.playlistName = playlistName;
     }
 
     public Long getId() {
@@ -30,19 +47,27 @@ public class PlaylistResponseDTO {
         this.id = id;
     }
 
-    public String getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 
-    public List<String> getSongNames() {
-        return songNames;
+    public List<SongResponseDTO> getSongs() {
+        return songs;
     }
 
-    public void setSongNames(List<String> songNames) {
-        this.songNames = songNames;
+    public void setSongs(List<SongResponseDTO> songNames) {
+        this.songs = songNames;
     }
+
+    public int getSongsCount() {
+        if(this.getSongs() == null){
+            return 0;
+        }
+        return this.getSongs().size();
+    }
+
 }

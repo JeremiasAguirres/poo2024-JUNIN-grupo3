@@ -2,9 +2,13 @@ package ar.edu.unnoba.poo2024.allmusic.model;
 
 import java.util.List;
 
-import jakarta.persistence.*;
-
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name="playlists")
@@ -13,8 +17,7 @@ public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String namePlaylist;
-    private int count;
+    private String playlistName;
     @ManyToOne
     private User owner;
     @ManyToMany
@@ -45,19 +48,11 @@ public class Playlist {
     }
 
     public String getPlaylistName() {
-        return this.namePlaylist;
+        return this.playlistName;
     }
 
     public void setPlaylistName(String name) {
-        this.namePlaylist = name;
-    }
-
-    public int getCount(){
-        return this.songs.size();
-    }
-
-    public void setCount(int i){
-        this.count = this.songs.size();
+        this.playlistName = name;
     }
 
 }
