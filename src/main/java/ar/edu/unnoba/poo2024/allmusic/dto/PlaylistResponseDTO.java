@@ -8,6 +8,7 @@ public class PlaylistResponseDTO {
     private Long id;
     private List<SongResponseDTO> songs; // Lista de canciones
     private Owner owner;
+    private int songsCount;
 
     public static class Owner{
         private long id;
@@ -64,10 +65,11 @@ public class PlaylistResponseDTO {
     }
 
     public int getSongsCount() {
-        if(this.getSongs() == null){
-            return 0;
-        }
-        return this.getSongs().size();
+        return this.songsCount;
+    }
+
+    public void setSongsCount(int songCount) {
+        this.songsCount = songCount;
     }
 
 }

@@ -57,4 +57,11 @@ public class Playlist {
         this.playlistName = name;
     }
 
+    public int getSongsCount() {
+        if(this.getSongs() == null){
+            return 0;
+        }
+        return this.getSongs().size();
+    }
+
 }

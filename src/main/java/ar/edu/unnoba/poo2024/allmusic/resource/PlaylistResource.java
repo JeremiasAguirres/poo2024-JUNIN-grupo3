@@ -57,10 +57,6 @@ public class PlaylistResource {
                     .map(playlist -> modelMapper.map(playlist, PlaylistResponseLiteDTO.class))
                     .collect(Collectors.toList());
 
-            for(PlaylistResponseLiteDTO dto : dtos){
-                dto.setCount();
-            }
-
             return new ResponseEntity<>(dtos, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);

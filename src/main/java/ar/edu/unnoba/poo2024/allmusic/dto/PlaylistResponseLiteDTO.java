@@ -12,7 +12,7 @@ public class PlaylistResponseLiteDTO {
     private String playlistName;
     @JsonIgnore
     private List<Song> songs;
-    private int count;
+    private int songsCount;
 
     public String getPlaylistName() {
         return playlistName;
@@ -22,12 +22,12 @@ public class PlaylistResponseLiteDTO {
         this.playlistName = playlistName;
     }
 
-    public int getCount() {
-        return this.count;
+    public int getSongsCount() {
+        return this.songsCount;
     }
 
-    public void setCount() {
-        this.count = this.getSongs().size();
+    public void setSongsCount(int songCount) {
+        this.songsCount = songCount;
     }
 
     public List<Song> getSongs() {
