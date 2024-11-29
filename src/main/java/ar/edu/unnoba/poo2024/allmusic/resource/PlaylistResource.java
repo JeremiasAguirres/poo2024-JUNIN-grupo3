@@ -184,4 +184,22 @@ public class PlaylistResource {
         }
     }
 
+    @GetMapping("/me/playlists")
+    public ResponseEntity<?> getCurrentUserPlaylists(@RequestHeader("Authorization") String token) {
+        try {
+            authorizationService.authorize(token);
+            
+            List<Playlist> curentUserPlaylists = playlistService.getCurrentUserPlaylists(jwtTokenUtil.getSubject(token));
+            ModelMapper modelMapper = new ModelMapper();
+            List<PlaylistResponseLiteDTO> dtos = curentUserPlaylists.stream()
+            .map(playlist -> modelMapper.map(playlist, PlaylistResponseLiteDTO.class))
+            .collect(Collectors.toList());
+
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
+
+        }catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+    }
+
 }

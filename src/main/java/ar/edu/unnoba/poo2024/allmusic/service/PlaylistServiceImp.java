@@ -78,4 +78,9 @@ public class PlaylistServiceImp implements PlaylistService {
         return (playlistRepository.getReferenceById(id).getOwner().equals(user));
     }
 
+    @Override
+    public List<Playlist> getCurrentUserPlaylists(String currentUser){
+        return playlistRepository.findByOwner(currentUser);
+    }
+
 }

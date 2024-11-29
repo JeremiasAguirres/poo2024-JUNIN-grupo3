@@ -15,5 +15,6 @@ public interface PlaylistService {
     public void addSongToPlaylist(Long playListID, Long songId) throws Exception;
     public void removeSongFromPlaylist(Long playListID, Long songId) throws Exception;
     public boolean checkOwnership(User user, Long playListID) throws Exception;
+    public List<Playlist> getCurrentUserPlaylists(String username);
 
 }
