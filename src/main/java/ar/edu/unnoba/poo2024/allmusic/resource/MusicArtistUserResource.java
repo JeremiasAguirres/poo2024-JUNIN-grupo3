@@ -37,11 +37,7 @@ public class MusicArtistUserResource {
     @Autowired
     private AuthenticationService authenticationService;
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    @Autowired
     private AuthorizationService authorizationService;
-    @Autowired
-    private SongService songService;
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateUserRequestDTO userDTO){
@@ -67,28 +63,6 @@ public class MusicArtistUserResource {
         }catch (Exception e){
             return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
         }
-    }
-
-    @GetMapping("/me/songs")
-    public ResponseEntity<?> getUserSongs(@RequestHeader("Authorization") String token) {
-        try {
-            authorizationService.authorize(token);
-            List<Song> userSongs = songService.getByArtistOrGenre(jwtTokenUtil.getSubject(token) , null);
-
-            ModelMapper modelMapper = new ModelMapper();
-            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
-            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
-            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
-
-            List<SongResponseDTO> dtos = userSongs.stream()
-            .map(song -> modelMapper.map(song, SongResponseDTO.class))
-            .collect(Collectors.toList());
-            return new ResponseEntity<>(dtos, HttpStatus.OK);
-
-        }catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        }
-    }
-    
+    }   
 
 }

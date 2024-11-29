@@ -83,7 +83,7 @@ public class SongResource {
     }
 
     @GetMapping(params = {"artist", "genre"}, produces = "application/json")
-    public ResponseEntity<?> getSongsFilter(@RequestHeader("Authorization") String token,@RequestParam(required = false) String artist ,@RequestParam(required = false) String genre){
+    public ResponseEntity<?> getSongs(@RequestHeader("Authorization") String token,@RequestParam(required = false) String artist ,@RequestParam(required = false) String genre){
         try{
             authorizationService.authorize(token);
 
@@ -154,6 +154,27 @@ public class SongResource {
         }
         catch(Exception e){
             return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @GetMapping("/me/songs")
+    public ResponseEntity<?> getCurrentUserSongs(@RequestHeader("Authorization") String token) {
+        try {
+            authorizationService.authorize(token);
+            List<Song> userSongs = songService.getByArtistOrGenre(jwtTokenUtil.getSubject(token) , null);
+
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.createTypeMap(Song.class, SongResponseDTO.class)
+            .addMapping(src -> src.getAuthor().getUsername(),(dto, v) -> dto.getArtist().setName((String)v))
+            .addMapping(src -> src.getAuthor().getId(),(dto, v) -> dto.getArtist().setId((Long)v));
+
+            List<SongResponseDTO> dtos = userSongs.stream()
+            .map(song -> modelMapper.map(song, SongResponseDTO.class))
+            .collect(Collectors.toList());
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
+
+        }catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 }
