@@ -82,7 +82,6 @@ public class PlaylistResource {
             PlaylistResponseDTO responseDTO = new PlaylistResponseDTO();
             responseDTO = modelMapper.map(playlist, PlaylistResponseDTO.class);
 
-
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
         } catch (Exception e) {
