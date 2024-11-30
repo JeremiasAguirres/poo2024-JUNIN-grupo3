@@ -15,8 +15,8 @@ public interface SongRepository extends JpaRepository<Song,Long>{
     @Query(nativeQuery = true, value = "SELECT * FROM songs WHERE name = ?1")
     public Song findByName(@Param("name") String name);
 
-    //@Query(nativeQuery = true, value = "SELECT songs.* FROM songs JOIN users ON users.id = author_id WHERE (username = ?1 AND genre = ?2) UNION SELECT songs.* FROM songs JOIN users ON users.id = author_id WHERE username = ?1 UNION SELECT songs.* FROM songs WHERE genre = ?2" )
-    @Query(value = "SELECT s FROM Song s WHERE s.genre = ?2 AND s.author.username = ?1 UNION SELECT s FROM Song s WHERE s.author.username = ?1 UNION SELECT s FROM Song s WHERE s.genre = ?2")
+    @Query(nativeQuery = true, value = "SELECT songs.* FROM songs JOIN users ON users.id = author_id WHERE (username = ?1 AND genre = ?2) UNION SELECT songs.* FROM songs JOIN users ON users.id = author_id WHERE username = ?1 UNION SELECT songs.* FROM songs WHERE genre = ?2" )
+    //@Query(value = "SELECT s FROM Song s WHERE s.genre = ?2 AND s.author.username = ?1 UNION SELECT s FROM Song s WHERE s.author.username = ?1 UNION SELECT s FROM Song s WHERE s.genre = ?2")
     public List<Song> getByArtistOrGenre(@Param("username") String artist, @Param("genre") String genre);
 
 }

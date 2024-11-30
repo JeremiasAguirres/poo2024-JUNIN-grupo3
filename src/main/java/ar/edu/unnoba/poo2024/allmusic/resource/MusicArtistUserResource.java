@@ -51,6 +51,6 @@ public class MusicArtistUserResource {
         }catch (Exception e){
             return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
         }
-    }   
+    }
 
 }

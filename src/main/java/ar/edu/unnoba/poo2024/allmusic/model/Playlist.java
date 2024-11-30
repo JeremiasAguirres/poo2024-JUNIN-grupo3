@@ -13,9 +13,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="playlists")
 public class Playlist {
-
-
-    //agregar metodo para obtener la cuenta de canciones
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
