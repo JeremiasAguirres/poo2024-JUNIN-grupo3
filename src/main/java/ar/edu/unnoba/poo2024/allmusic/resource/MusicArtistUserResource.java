@@ -18,11 +18,12 @@ import ar.edu.unnoba.poo2024.allmusic.model.User;
 import ar.edu.unnoba.poo2024.allmusic.service.AuthenticationService;
 import ar.edu.unnoba.poo2024.allmusic.service.UserService;
 
+
 @RestController
 @RequestMapping("/artist")
 public class MusicArtistUserResource {
     @Autowired
-    private UserService service;
+    private UserService userService;
     @Autowired
     private AuthenticationService authenticationService;
 
@@ -31,12 +32,11 @@ public class MusicArtistUserResource {
         ModelMapper modelMapper = new ModelMapper();
         User user = modelMapper.map(userDTO, MusicArtistUser.class);
         try{
-            service.create(user);
+            userService.create(user);
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         }
-
     }
 
     @PostMapping(path="/auth",produces = "application/json")

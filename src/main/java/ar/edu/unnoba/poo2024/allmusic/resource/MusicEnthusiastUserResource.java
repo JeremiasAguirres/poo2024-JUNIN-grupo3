@@ -22,7 +22,7 @@ import ar.edu.unnoba.poo2024.allmusic.service.UserService;
 @RequestMapping("/enthusiast")
 public class MusicEnthusiastUserResource {
     @Autowired
-    private UserService service;
+    private UserService userService;
     @Autowired
     private AuthenticationService authenticationService;
 
@@ -31,7 +31,7 @@ public class MusicEnthusiastUserResource {
         ModelMapper modelMapper = new ModelMapper();
         User user = modelMapper.map(userDTO, MusicEnthusiastUser.class);
         try{
-            service.create(user);
+            userService.create(user);
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);

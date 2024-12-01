@@ -13,11 +13,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="playlists")
 public class Playlist {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String namePlaylist;
+    private String playlistName;
     @ManyToOne
     private User owner;
     @ManyToMany
@@ -47,11 +46,19 @@ public class Playlist {
         this.id = id;
     }
 
-    public String getName() {
-        return this.namePlaylist;
+    public String getPlaylistName() {
+        return this.playlistName;
     }
 
-    public void setName(String name) {
-        this.namePlaylist = name;
+    public void setPlaylistName(String name) {
+        this.playlistName = name;
     }
+
+    public int getSongsCount() {
+        if(this.getSongs() == null){
+            return 0;
+        }
+        return this.getSongs().size();
+    }
+
 }
